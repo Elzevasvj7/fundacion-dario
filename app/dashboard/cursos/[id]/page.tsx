@@ -67,7 +67,7 @@ async function Course({ params: { id } }: { params: { id: string } }) {
         {course?.materia && course?.materia.length > 0 ? (
           <div className="grid grid-cols-3">
             {course.materia.map((i: any, index: number) => (
-              <div className="card border p-5">
+              <div className="card border p-5" key={index}>
                 <h3>{i.nombre}</h3>
                 <p>
                   Profesor: {i.profesor.nombre} {i.profesor.apellido}

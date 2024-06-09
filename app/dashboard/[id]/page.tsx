@@ -90,7 +90,7 @@ async function User({ params: { id } }: { params: { id: string } }) {
         {user.inscripcion.length > 0 ? (
           <div className="grid grid-cols-3">
             {user.inscripcion.map((i: any, index: number) => (
-              <div className="card border p-5">
+              <div key={index} className="card border p-5">
                 <h3>{i.curso.nombre_curso}</h3>
                 <p>
                   Estatus:{" "}
