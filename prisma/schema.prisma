@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model alumnos {
+  alumno_id   Int           @id @default(autoincrement())
+  nombre      String?       @db.Text
+  apellido    String?       @db.Text
+  edad        Int?
+  direccion   String?       @db.VarChar(255)
+  cedula      String?       @db.VarChar(20)
+  telefono    String?       @db.VarChar(255)
+  correo      String?       @db.VarChar(255)
+  fecha_nac   DateTime?     @db.Date
+  estatus     Int           @default(1)
+  user_id     Int?          @unique(map: "user_id_UNIQUE")
+  usuarios    usuarios?     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "alumno_ibfk_1")
+  inscripcion inscripcion[]
+
+  @@index([user_id], map: "alumno_ibfk_1_idx")
+}
+
+model aula {
+  aula_id     Int     @id @default(autoincrement())
+  nombre_aula String? @db.VarChar(255)
+}
+
+model curso {
+  curso_id     Int           @id @default(autoincrement())
+  nombre_curso String?       @db.VarChar(255)
+  estatus      String?       @db.VarChar(45)
+  inscripcion  inscripcion[]
+  materia      materia[]
+}
+
+model inscripcion {
+  inscripcion_id Int      @id @default(autoincrement())
+  alumno_id      Int?
+  curso_id       Int?
+  turno_id       Int
+  estatus        String?  @db.VarChar(45)
+  curso          curso?   @relation(fields: [curso_id], references: [curso_id], onDelete: NoAction, onUpdate: NoAction, map: "inscripcion_ibfk_1")
+  alumnos        alumnos? @relation(fields: [alumno_id], references: [alumno_id], onDelete: Cascade, map: "inscripcion_ibfk_2")
+  turno          turno    @relation(fields: [turno_id], references: [turno_id], onDelete: Cascade, map: "inscripcion_ibfk_3")
+
+  @@index([alumno_id], map: "inscripcion_ibfk_2")
+  @@index([turno_id], map: "turno_id")
+  @@index([curso_id], map: "inscripcion_ibfk_1_idx")
+}
+
+model materia {
+  materia_id  Int       @id @default(autoincrement())
+  curso_id    Int?
+  profesor_id Int?
+  estatusC    Int       @default(1)
+  nombre      String?   @db.VarChar(255)
+  curso       curso?    @relation(fields: [curso_id], references: [curso_id], onDelete: Cascade, map: "materia_ibfk_1")
+  profesor    profesor? @relation(fields: [profesor_id], references: [profesor_id], onDelete: Cascade, map: "materia_ibfk_2")
+
+  @@index([curso_id], map: "curso_ibfk_1")
+  @@index([profesor_id], map: "curso_ibfk_2")
+}
+
+model profesor {
+  profesor_id Int       @id @default(autoincrement())
+  nombre      String?   @db.Text
+  apellido    String?   @db.Text
+  direccion   String?   @db.VarChar(255)
+  cedula      String?   @db.VarChar(20)
+  telefono    String?   @db.VarChar(255)
+  correo      String?   @db.VarChar(255)
+  nivel_est   String?   @db.Text
+  estatus     Int       @default(1)
+  materia     materia[]
+}
+
+model rol {
+  rol_id                     Int        @id @default(autoincrement())
+  nombre_rol                 String?    @db.Text
+  usuarios_usuarios_rolTorol usuarios[] @relation("usuarios_rolTorol")
+}
+
+model turno {
+  turno_id    Int           @id @default(autoincrement())
+  tipo_turno  String?       @db.VarChar(255)
+  inscripcion inscripcion[]
+}
+
+model usuarios {
+  user_id               Int      @id @default(autoincrement())
+  nombre                String?  @db.Text
+  usuario               String?  @db.VarChar(255)
+  password              String?  @db.VarChar(255)
+  rol                   Int?
+  estatus               Int      @default(1)
+  alumnos               alumnos?
+  rol_usuarios_rolTorol rol?     @relation("usuarios_rolTorol", fields: [rol], references: [rol_id], onDelete: NoAction, onUpdate: NoAction, map: "usuarios_ibfk_1")
+
+  @@index([rol], map: "rol")
+}
