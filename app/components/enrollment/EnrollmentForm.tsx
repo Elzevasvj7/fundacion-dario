@@ -60,11 +60,6 @@ const EnrollmentForm = ({ courses }: { courses: any[] }) => {
     course: "",
   });
   const handlerCreateEnrollment = async (formData: FormData) => {
-    if (!course) {
-      setErrors({ ...errors, course: "El curso es requerido" });
-      return false;
-    }
-    setErrors({ ...errors, course: "" });
     const response: any = await createEnrollment(formData);
     if (response.data) {
       setData(response.data);
@@ -299,7 +294,7 @@ const EnrollmentForm = ({ courses }: { courses: any[] }) => {
             />
           </div>
         </label> */}
-        <div className="col-span-2">
+        {/* <div className="col-span-2">
           <h2>Datos del curso</h2>
         </div>
         <label className="form-control w-full">
@@ -331,7 +326,7 @@ const EnrollmentForm = ({ courses }: { courses: any[] }) => {
               <span className="text-red-500 text-sm">{errors.course}</span>
             </div>
           )}
-        </label>
+        </label> */}
         <div className="col-span-2">
           <SubmmitButton />
         </div>

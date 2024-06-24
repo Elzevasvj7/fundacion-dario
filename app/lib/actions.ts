@@ -1,5 +1,4 @@
 "use server";
-import axios from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -35,25 +34,25 @@ export const getSession = async () => {
 };
 export async function signIn(state: FormState, formData: FormData) {
   const session = await getSession();
-  const validatedFields = SignupFormSchema.safeParse({
-    username: formData.get("username"),
-    password: formData.get("password"),
-  });
+  const validatedFields = {
+    username: formData.get("username") as string,
+    password: formData.get("password") as string,
+  }
 
   const user = await prisma.usuarios.findFirst({
-    where: { usuario: validatedFields.data?.username },
+    where: { usuario: validatedFields.username },
     include: {
       rol_usuarios_rolTorol: true,
     },
   });
-  const hash = user?.password?.replace("$2y$", "$2b$") ?? "";
-  if (!validatedFields.success) {
-    console.log(validatedFields.error.message);
+  if (!user) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Usuario no encontrado",
     };
   }
-  const match = await bcrypt.compare(validatedFields.data?.password, hash);
+  const hash = user.password ? user.password : "";
+
+  const match = await bcrypt.compare(validatedFields.password, hash);
   if (!match) {
     return {
       message: "Usuario o contraseña incorrectos",
@@ -102,7 +101,6 @@ export async function signUp(state: FormState, formData: FormData) {
     };
   }
   const salt = bcrypt.genSaltSync(10);
-  console.log(salt);
   const hash = bcrypt.hashSync(validateData.user.password, salt);
   const user = await prisma.usuarios.create({
     include: { rol_usuarios_rolTorol: true },

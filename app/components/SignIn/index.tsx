@@ -10,6 +10,7 @@ const SubmmitButton = () => {
   return (
     <button
       className="btn bg-[#153744] hover:bg-[#336666] w-full border-none transition duration-500 text-white"
+      disabled={pending}
       type="submit"
     >
       {pending && <span className="loading loading-spinner loading-md"></span>}
@@ -94,15 +95,15 @@ const SignIn = () => {
           <div className="card-actions justify-end">
             <SubmmitButton />
           </div>
-          <div className="h-[2px] w-full my-1 bg-gray-200"/>
-          <div>
+          {/* <div className="h-[2px] w-full my-1 bg-gray-200"/> */}
+          {/* <div>
             <Link
               href={"/registro"}
               className="btn bg-[#153744] hover:bg-[#336666] w-full border-none transition duration-500 text-white"
             >
               <span className="text-sm">Crear una cuenta nueva</span>
             </Link>
-          </div>
+          </div> */}
           <div>
             {state?.message && (
               <p className="text-red-500 text-sm">{state.message}</p>

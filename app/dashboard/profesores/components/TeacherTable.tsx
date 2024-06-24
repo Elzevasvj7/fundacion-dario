@@ -2,6 +2,7 @@
 import React, { useRef, useState } from "react";
 import { Modal } from "../../components/Modal";
 import { createTeacher, deleteTeacher, updateTeacher } from "../lib/teacher";
+import Link from "next/link";
 
 const TeacherTable = ({ profesores }: { profesores: any[] }) => {
   const modalRef = useRef<HTMLInputElement>(null);
@@ -106,12 +107,12 @@ const TeacherTable = ({ profesores }: { profesores: any[] }) => {
           />
         </svg>
         <h1>Lista de profesores</h1>
-        <button
-          onClick={handlerOpenCreateModal}
+        <Link
+          href={"/dashboard/profesores/crear"}
           className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
         >
           Nuevo
-        </button>
+        </Link>
       </div>
       <div className="overflow-x-auto bg-white text-black w-full h-[90%]">
         <table className="table w-full h-full">

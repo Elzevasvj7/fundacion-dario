@@ -18,6 +18,7 @@ export default async function Teachers() {
 
   return (
     <div className="h-full w-full p-5 relative">
+      
       <TeacherTable profesores={data} />
     </div>
   );

@@ -1,69 +1,75 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { error } from "console";
 import { prisma } from "../prisma";
 import * as bcrypt from "bcrypt";
+import { revalidatePath } from "next/cache";
 
-export async function createEnrollment(formData: FormData) {
+export type FormState =
+  | {
+      errors?: {
+        username?: string[];
+        password?: string[];
+      };
+      message?: string;
+      error?: string;
+    }
+  | undefined;
+export async function createTeacherAction(
+  state: FormState,
+  formData: FormData
+) {
   try {
     const validateData = {
       user: {
         usuario: formData.get("user")?.toString(),
         password: formData.get("password") as string,
       },
-      student: {
+      teacher: {
         nombre: formData.get("name")?.toString(),
         apellido: formData.get("lastName")?.toString(),
-        edad: Number(formData.get("age")),
         direccion: formData.get("address")?.toString(),
         cedula: formData.get("cedula")?.toString(),
         telefono: formData.get("phone")?.toString(),
         correo: formData.get("email")?.toString(),
+        nivel_est: formData.get("nivel_est")?.toString(),
       },
     };
     const findUser = await prisma.usuarios.findFirst({
       where: { usuario: validateData.user.usuario },
     });
-    const findStudent = await prisma.alumnos.findFirst({
-      where: { cedula: validateData.student.cedula },
+    const findStudent = await prisma.profesor.findFirst({
+      where: { cedula: validateData.teacher.cedula },
     });
     if (findUser) {
       throw new Error("Este nombre usuario ya existe");
     }
     if (findStudent) {
-      throw new Error("La cedula de este estudiante ya existe");
+      throw new Error("La cedula de este profesor ya existe");
     }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(validateData.user.password, salt);
     const user = await prisma.usuarios.create({
       data: {
         ...validateData.user,
+        rol: 4,
         password: hash,
-        rol: 3
       },
     });
-    const student = await prisma.alumnos.create({
+    const profesor = await prisma.profesor.create({
       data: {
-        ...validateData.student,
+        ...validateData.teacher,
         user_id: user.user_id,
       },
     });
-
     return {
-      data: student,
-      error: null,
+      message: `Profesor creado con exito `,
     };
   } catch (e: any) {
     console.log(e.message);
     return {
-      data: null,
       error: e.message || e.messages,
     };
+  } finally {
+    revalidatePath("/dashboard/profesores");
   }
-}
-
-export async function deleteEnrollment(enrollmentId: number) {
-  const response = await prisma.inscripcion.delete({
-    where: { inscripcion_id: enrollmentId },
-  });
-  revalidatePath("/dashboard/inscripciones");
 }

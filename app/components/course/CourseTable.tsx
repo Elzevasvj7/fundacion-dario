@@ -18,6 +18,9 @@ export const CourseTable = ({
   const modalRef = useRef<HTMLInputElement>(null);
   const deleteModal = useRef<HTMLDialogElement>(null);
   const [name, setName] = useState("");
+  const [cost, setCost] = useState(0);
+  const [status, setStatus] = useState("");
+
   const [courseId, setCourseId] = useState(0);
   const [type, setType] = useState(false);
 
@@ -28,9 +31,14 @@ export const CourseTable = ({
   const handlerOpenUpdateModal = (course: {
     curso_id: number;
     nombre_curso: string;
+    monto: number;
+    estatus: string;
   }) => {
     setCourseId(course.curso_id);
     setName(course.nombre_curso);
+    setCost(course.monto);
+    setStatus(course.estatus);
+
     setType(false);
     modalRef.current?.click();
   };
@@ -57,8 +65,9 @@ export const CourseTable = ({
     deleteUserWithId();
     deleteModal.current?.close();
   };
+  console.log(session);
   return (
-    <div className="h-full flex flex-col items-center justify-start w-full p-5 bg">
+    <div className=" flex flex-col items-center justify-start w-full p-5 bg">
       <div className="w-full mb-5 card bg-white text-black p-5 flex flex-row items-center gap-2 h-[10%]">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -88,12 +97,14 @@ export const CourseTable = ({
           />
         </svg>
         <h1>Lista de cursos</h1>
-        <button
-          onClick={handlerOpenCreateModal}
-          className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
-        >
-          Nuevo Curso
-        </button>
+        {session.rol == "Administrador" && (
+          <button
+            onClick={handlerOpenCreateModal}
+            className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
+          >
+            Nuevo Curso
+          </button>
+        )}
       </div>
       <div className="overflow-x-auto card bg-white text-black w-full h-[90%]">
         <table className="table w-full h-full">
@@ -101,6 +112,7 @@ export const CourseTable = ({
             <tr>
               <th>ID</th>
               <th>Nombre del curso</th>
+              <th>Costo</th>
               <th>Estatus</th>
               <th>Acciones</th>
             </tr>
@@ -113,33 +125,42 @@ export const CourseTable = ({
               >
                 <th>{index + 1}</th>
                 <td>{item.nombre_curso}</td>
+                <td>${item.monto}</td>
                 <td>
-                  <span className="badge bg-green-500 text-white border-none">
-                    Activo
-                  </span>
+                  {item?.estatus == "Activo" && (
+                    <span className="badge bg-green-500 text-white border-none">
+                      Activo
+                    </span>
+                  )}
+                  {item?.estatus == "Inactivo" && (
+                    <span className="badge bg-red-500 text-white border-none">
+                      Inactivo
+                    </span>
+                  )}
                 </td>
                 <td>
-                  {session.rol == "Estudiante" && (
-                    <div className="flex items-center justify-center">
+                  {session.rol === "Estudiante" && (
+                    <div className="w-full flex items-center justify-start">
                       <Link
                         href={`/dashboard/cursos/${item.curso_id}`}
-                        className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300"
+                        className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300 text-white"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            fill="#ffffff"
-                            d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"
-                          />
-                        </svg>
+                        Ver curso
                       </Link>
                     </div>
                   )}
-                  {session.rol == "Administrador" && (
+                  {session.rol === "Profesor" && (
+                    <div className="w-full flex items-center justify-start">
+                      <Link
+                        href={`/dashboard/cursos/${item.curso_id}`}
+                        className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300 text-white"
+                      >
+                        Ver curso
+                      </Link>
+                    </div>
+                  )}
+
+                  {session.rol == "Profesor" && (
                     <div className="flex gap-2 items-center">
                       <button
                         onClick={() => handlerOpenUpdateModal(item)}
@@ -204,13 +225,32 @@ export const CourseTable = ({
                 value={name}
               />
             </label>
+            <label className="form-control w-full ">
+              <div className="label">
+                <span className="text-black text-sm">Costo</span>
+              </div>
+              <input
+                required
+                name="monto"
+                type="number"
+                placeholder="Monto"
+                className="input input-sm input-bordered w-full bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
+                onChange={(e) => setCost(parseInt(e.target.value))}
+                value={cost}
+              />
+            </label>
             <label className="form-control w-full">
               <div className="label">
                 <span className="text-black text-sm">Estado</span>
               </div>
-              <select className="select select-sm select-bordered bg-transparent focus:outline-none focus:border-[#009688] transition duration-500">
-                <option>Activo</option>
-                <option>Inactivo</option>
+              <select
+                name="estatus"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="select select-sm select-bordered bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
+              >
+                <option value={"Activo"}>Activo</option>
+                <option value={"Inactivo"}>Inactivo</option>
               </select>
             </label>
             <div className="modal-action justify-center gap-2">

@@ -39,6 +39,16 @@ const Sidebar = ({ user }: { user: any }) => {
         </li>
         <li>
           <details>
+            <summary>Pagos</summary>
+            <ul>
+              <li>
+                <Link href={"/dashboard/alumnos"}>Lista de pagos</Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
             <summary>Profesores</summary>
             <ul>
               <li>
