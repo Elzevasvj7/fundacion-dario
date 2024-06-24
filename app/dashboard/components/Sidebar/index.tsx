@@ -42,7 +42,7 @@ const Sidebar = ({ user }: { user: any }) => {
             <summary>Pagos</summary>
             <ul>
               <li>
-                <Link href={"/dashboard/alumnos"}>Lista de pagos</Link>
+                <Link href={"/dashboard/pagos"}>Lista de pagos</Link>
               </li>
             </ul>
           </details>
