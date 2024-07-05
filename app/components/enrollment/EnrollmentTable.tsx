@@ -3,15 +3,19 @@ import { deleteEnrollment } from "@/app/lib/enrollment/actions";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 
-export const EnrollmentTable = ({ enrollments }: { enrollments: any[] }) => {
+export const EnrollmentTable = ({
+  enrollments,
+  session,
+}: {
+  enrollments: any[];
+  session: any;
+}) => {
   const [enrollmentId, setEnrollmentId] = useState(0);
   const deleteModal = useRef<HTMLDialogElement>(null);
-
   const handlerOpenDeleteModal = (id: number) => {
     setEnrollmentId(id);
     deleteModal.current?.showModal();
   };
-
   const handlerDelete = () => {
     const deleteEnrollmentWithId = deleteEnrollment.bind(null, enrollmentId);
     deleteEnrollmentWithId();
@@ -32,22 +36,25 @@ export const EnrollmentTable = ({ enrollments }: { enrollments: any[] }) => {
           />
         </svg>
         <h1>Lista de inscripciones</h1>
-        <Link
-          href={"/dashboard/inscripciones/crear-inscripcion"}
-          className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
-        >
-          Nueva Inscripcion
-        </Link>
+        {session.rol === "Administrador" && (
+          <Link
+            href={"/dashboard/inscripciones/crear-inscripcion"}
+            className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
+          >
+            Nueva Inscripcion
+          </Link>
+        )}
       </div>
       <div className="overflow-x-auto bg-white text-black w-full h-[90%]">
         <table className="table w-full h-full">
           <thead className="[&>tr]:border-none">
             <tr>
               <th>ID</th>
-              <th>Alumno</th>
+              <th>Estudiante</th>
               <th>Curso</th>
-              <th>Status</th>
-              <th>Acciones</th>
+              <td>Estatus de pago</td>
+              <td>Costo</td>
+              {session.rol === "Administrador" && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody className="[&>tr]:border-none">
@@ -62,13 +69,33 @@ export const EnrollmentTable = ({ enrollments }: { enrollments: any[] }) => {
                 </th>
                 <td>{item.curso?.nombre_curso}</td>
                 <td>
-                  <span className="badge bg-green-500 text-white border-none">
-                    Activo
-                  </span>
+                  {" "}
+                  {item.pagos?.estatus == "Pagado" && (
+                    <span className="badge bg-green-500 text-white border-none">
+                      Pagado
+                    </span>
+                  )}
+                  {item.pagos?.estatus == "Pendiente" && (
+                    <span className="badge badge-warning text-white border-none">
+                      Pendiente
+                    </span>
+                  )}
+                  {item.pagos?.estatus == "Procesando" && (
+                    <span className="badge badge-warning text-white border-none">
+                      Procesando
+                    </span>
+                  )}
+                  {item.pagos?.estatus == "Rechazado" && (
+                    <span className="badge bg-red-500 text-white border-none">
+                      Rechazado
+                    </span>
+                  )}
                 </td>
-                <td>
-                  <div className="flex gap-2 items-center">
-                    {/* <button className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300">
+                <td>${item.pagos?.monto}</td>
+                {session.rol === "Administrador" && (
+                  <td>
+                    <div className="flex gap-2 items-center">
+                      {/* <button className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -81,26 +108,29 @@ export const EnrollmentTable = ({ enrollments }: { enrollments: any[] }) => {
                         />
                       </svg>
                     </button> */}
-                    <button
-                      onClick={() =>
-                        handlerOpenDeleteModal(item.inscripcion_id)
-                      }
-                      className="btn btn-sm bg-red-500 border-none hover:bg-red-600 hover:scale-110 transition duration-300"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 256 256"
-                      >
-                        <path
-                          fill="#ffffff"
-                          d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16M112 168a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm0-120H96v-8a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8Z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
+                      {session.rol === "Administrador" && (
+                        <button
+                          onClick={() =>
+                            handlerOpenDeleteModal(item.inscripcion_id)
+                          }
+                          className="btn btn-sm bg-red-500 border-none hover:bg-red-600 hover:scale-110 transition duration-300"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 256 256"
+                          >
+                            <path
+                              fill="#ffffff"
+                              d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16M112 168a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm0-120H96v-8a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8Z"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

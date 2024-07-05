@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import StudentsTable from "./components/StudentsTable";
 import { prisma } from "@/app/lib/prisma";
+import { getSession } from "@/app/lib/actions";
+import { redirect } from "next/navigation";
 
 async function getData() {
   try {
@@ -14,6 +16,10 @@ async function getData() {
 
 export default async function Students() {
   const data = await getData();
+  const session = await getSession();
+  if (session.rol != "Administrador") {
+    redirect("/dashboard");
+  }
   return (
     <div className="h-full w-full p-5 relative">
       <StudentsTable alumnos={data} />

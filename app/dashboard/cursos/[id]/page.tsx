@@ -95,13 +95,16 @@ async function Course({ params: { id } }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-        {session.rol === "Estudiante" &&
-          enrollment?.estatus === "Activa" && (
-            <p>Ya tienes un inscripcion activa</p>
-          )}
-        {session.rol === "Estudiante" &&
+        {session.rol === "Estudiante" && enrollment?.estatus === "Activa" && (
+          <p>Ya tienes un inscripcion activa</p>
+        )}
+        {session.rol === "Estudiante" && enrollment?.estatus === "Activa" && (
+          <p>Ya tienes un inscripcion activa</p>
+        )}
+        {session.rol === "Administrador" &&
           !enrollment &&
-          course?.estatus == "Activo" && <EnrollmentCourse courseId={id} />}
+          course?.estatus == "Activo" &&
+          course.materia.length > 0 && <EnrollmentCourse courseId={id} />}
         {session.rol === "Estudiante" &&
           enrollment?.estatus === "Pendiente" && (
             <p>Pareces que tienes una inscripcion pendiente de pago</p>

@@ -12,79 +12,137 @@ const Sidebar = ({ user }: { user: any }) => {
     <div
       className={`flex ${
         open ? "w-60" : "max-w-16"
-      } bg-[#222d32] h-full relative transition-all`}
+      } bg-[#222d32] h-full relative transition-all text-white`}
     >
       <ul
-        className={`menu w-full rounded-box gap-2 ${open ? "block" : "hidden"}`}
+        className={`menu w-full rounded-box gap-2 ${
+          open ? "block" : "hidden"
+        } text-white`}
       >
         <li className="w-full">
-          {/* <div className="avatar placeholder my-5">
-            <div className="bg-neutral text-neutral-content rounded-full w-14">
-              <img src="/user.png" />
-            </div>
-          </div> */}
           <div>
             <h2 className="text-center text-xl">{user.username}</h2>
           </div>
         </li>
-        <li>
-          <details>
-            <summary>Alumnos</summary>
-            <ul>
-              <li>
-                <Link href={"/dashboard/alumnos"}>Lista de alumnos</Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Pagos</summary>
-            <ul>
-              <li>
-                <Link href={"/dashboard/pagos"}>Lista de pagos</Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Profesores</summary>
-            <ul>
-              <li>
-                <Link href={"/dashboard/profesores"}>Lista de profesores</Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary className="after:hidden">
-              <Link href={"/dashboard/materias"}>Materias</Link>
-            </summary>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary className="after:hidden">
-              <Link href={"/dashboard/cursos"}>Cursos</Link>
-            </summary>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary className="after:hidden">
-              <Link href={"/dashboard/inscripciones"}>Inscripciones</Link>
-            </summary>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary className="after:hidden">
-              <Link href={"/dashboard/reportes"}>Reportes</Link>
-            </summary>
-          </details>
-        </li>
+        {user.rol === "Administrador" && (
+          <>
+             <li>
+              <details>
+                <summary>Estudiantes</summary>
+                <ul>
+                  <li>
+                    <Link href={"/dashboard/alumnos"}>
+                      Lista de estudiantes
+                    </Link>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>Pagos</summary>
+                <ul>
+                  <li>
+                    <Link href={"/dashboard/pagos"}>Lista de pagos</Link>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>Usuarios</summary>
+                <ul>
+                  <li>
+                    <Link href={"/dashboard/usuarios"}>Lista de usuarios</Link>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/cursos"}>Cursos</Link>
+                </summary>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/materias"}>Materias</Link>
+                </summary>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/inscripciones"}>Inscripciones</Link>
+                </summary>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/reportes"}>Reportes</Link>
+                </summary>
+              </details>
+            </li>
+          </>
+        )}
+        {user.rol === "Secretario" && (
+          <>
+            <li>
+              <details>
+                <summary>Estudiantes</summary>
+                <ul>
+                  <li>
+                    <Link href={"/dashboard/alumnos"}>
+                      Lista de estudiantes
+                    </Link>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/cursos"}>Cursos</Link>
+                </summary>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/inscripciones"}>Inscripciones</Link>
+                </summary>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/reportes"}>Reportes</Link>
+                </summary>
+              </details>
+            </li>
+          </>
+        )}
+        {user.rol === "Estudiante" && (
+          <>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/cursos"}>Cursos</Link>
+                </summary>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary className="after:hidden">
+                  <Link href={"/dashboard/inscripciones"}>Inscripciones</Link>
+                </summary>
+              </details>
+            </li>
+          </>
+        )}
       </ul>
       <ul
         className={`menu w-full rounded-box gap-2 ${
@@ -98,7 +156,7 @@ const Sidebar = ({ user }: { user: any }) => {
             </div>
           </div>
         </div>
-        {/* <li className="dropdown dropdown-hover dropdown-right w-full">
+        <li className="dropdown dropdown-hover dropdown-right w-full">
           <button
             tabIndex={0}
             className="btn w-full bg-transparent rounded-full p-0 border-none"
@@ -123,10 +181,10 @@ const Sidebar = ({ user }: { user: any }) => {
               <a>Usuarios</a>
             </li>
             <li>
-            <Link href={"/dashboard/usuarios"}>Lista de usuarios</Link>
+              <Link href={"/dashboard/usuarios"}>Lista de usuarios</Link>
             </li>
           </ul>
-        </li> */}
+        </li>
         <li className="dropdown dropdown-hover dropdown-right w-full">
           <button
             tabIndex={0}
@@ -149,14 +207,14 @@ const Sidebar = ({ user }: { user: any }) => {
             className="dropdown-content z-[1] menu p-2 shadow bg-slate-100 rounded-box w-52"
           >
             <li className="rounded-md bg-[#009688] text-black">
-              <a>Alumnos</a>
+              <a>Estudiantes</a>
             </li>
             <li>
-              <Link href={"/dashboard/alumnos"}>Lista de alumnos</Link>
+              <Link href={"/dashboard/alumnos"}>Lista de estudiantes</Link>
             </li>
           </ul>
         </li>
-        <li className="dropdown dropdown-hover dropdown-right w-full">
+        {/* <li className="dropdown dropdown-hover dropdown-right w-full">
           <button
             tabIndex={0}
             className="btn w-full bg-transparent rounded-full p-0 border-none"
@@ -184,7 +242,7 @@ const Sidebar = ({ user }: { user: any }) => {
               <Link href={"/dashboard/profesores"}>Lista de profesores</Link>
             </li>
           </ul>
-        </li>
+        </li> */}
         <li className="dropdown dropdown-hover dropdown-right w-full">
           <button
             tabIndex={0}

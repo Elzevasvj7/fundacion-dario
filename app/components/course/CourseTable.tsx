@@ -139,28 +139,15 @@ export const CourseTable = ({
                   )}
                 </td>
                 <td>
-                  {session.rol === "Estudiante" && (
-                    <div className="w-full flex items-center justify-start">
-                      <Link
-                        href={`/dashboard/cursos/${item.curso_id}`}
-                        className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300 text-white"
-                      >
-                        Ver curso
-                      </Link>
-                    </div>
-                  )}
-                  {session.rol === "Profesor" && (
-                    <div className="w-full flex items-center justify-start">
-                      <Link
-                        href={`/dashboard/cursos/${item.curso_id}`}
-                        className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300 text-white"
-                      >
-                        Ver curso
-                      </Link>
-                    </div>
-                  )}
-
-                  {session.rol == "Profesor" && (
+                  <div className="w-full flex gap items-center justify-start mb-2">
+                    <Link
+                      href={`/dashboard/cursos/${item.curso_id}`}
+                      className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300 text-white"
+                    >
+                      Ver curso
+                    </Link>
+                  </div>
+                  {session.rol == "Administrador" && (
                     <div className="flex gap-2 items-center">
                       <button
                         onClick={() => handlerOpenUpdateModal(item)}

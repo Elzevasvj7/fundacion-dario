@@ -1,6 +1,7 @@
 import EnrollmentForm from "@/app/components/enrollment/EnrollmentForm";
+import { getSession } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/prisma";
-import axios from "axios";
+import { redirect } from "next/navigation";
 import React from "react";
 
 async function getCourses() {
@@ -13,6 +14,10 @@ async function getCourses() {
 }
 async function CreateEnrollment() {
   const courses = await getCourses();
+  const session = await getSession();
+  if (session.rol != "Administrador") {
+    redirect("/dashboard");
+  }
   return (
     <div className="p-5">
       <h1>Crear inscripcion</h1>

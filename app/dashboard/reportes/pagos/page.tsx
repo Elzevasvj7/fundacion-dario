@@ -4,7 +4,7 @@ import React from "react";
 async function PaymentReport() {
   return (
     <div className="p-5">
-      <PaymentsTable payments={[]} />;
+      <PaymentsTable payments={[]} />
     </div>
   );
 }

@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import { SubjectsTable } from "@/app/components/subjects/SubjectsTable";
 import { prisma } from "@/app/lib/prisma";
+import { getSession } from "@/app/lib/actions";
+import { redirect } from "next/navigation";
 
 async function getSubjects() {
   try {
@@ -37,7 +39,10 @@ export default async function Subjects() {
   const subjects = await getSubjects();
   const teachers = await getTeachers();
   const courses = await getCourses();
-  console.log(subjects);
+  const session = await getSession();
+  if (session.rol != "Administrador") {
+    redirect("/dashboard");
+  }
   return (
     <SubjectsTable subjects={subjects} teachers={teachers} courses={courses} />
   );

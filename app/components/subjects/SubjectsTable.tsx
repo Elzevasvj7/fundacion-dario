@@ -103,8 +103,7 @@ export const SubjectsTable = ({
               <th>ID</th>
               <th>Nombre de la materia</th>
               <th>Profesor</th>
-              <th className="text-center">Curso</th>
-              <th>Status</th>
+              <th>Curso</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -116,13 +115,15 @@ export const SubjectsTable = ({
               >
                 <th>{index + 1}</th>
                 <td>{item.nombre}</td>
-                <td> {item.profesor && item.profesor.nombre} {item.profesor && item.profesor.apellido}</td>
-                <td className="text-center">{item.curso? item.curso.nombre_curso : '-'}</td>
                 <td>
-                  <span className="badge bg-green-500 text-white border-none">
-                    Activo
-                  </span>
+                  {" "}
+                  {item.profesor && item.profesor.nombre}{" "}
+                  {item.profesor && item.profesor.apellido}
                 </td>
+                <td className="text-center">
+                  {item.curso ? item.curso.nombre_curso : "-"}
+                </td>
+
                 <td>
                   <div className="flex gap-2 items-center">
                     <button
@@ -231,15 +232,6 @@ export const SubjectsTable = ({
                     {teacher.nombre} {teacher.apellido}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label className="form-control w-full">
-              <div className="label">
-                <span className="text-black text-sm">Estado</span>
-              </div>
-              <select className="select select-sm select-bordered bg-transparent focus:outline-none focus:border-[#009688] transition duration-500">
-                <option>Activo</option>
-                <option>Inactivo</option>
               </select>
             </label>
             <div className="modal-action justify-center gap-2">

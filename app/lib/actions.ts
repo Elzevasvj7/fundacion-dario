@@ -51,7 +51,7 @@ export async function signIn(state: FormState, formData: FormData) {
     };
   }
   const hash = user.password ? user.password : "";
-
+  console.log(hash);
   const match = await bcrypt.compare(validatedFields.password, hash);
   if (!match) {
     return {
@@ -62,7 +62,7 @@ export async function signIn(state: FormState, formData: FormData) {
   session.username = user?.usuario ?? "";
   session.rol = user?.rol_usuarios_rolTorol?.nombre_rol ?? "";
   await session.save();
-  redirect("/dashboard");
+  redirect(`/dashboard/${user.usuario}`);
 }
 export async function signUp(state: FormState, formData: FormData) {
   const session = await getSession();

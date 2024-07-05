@@ -1,5 +1,7 @@
 import { PaymentsTable } from "@/app/components/payments/PaymentsTable";
+import { getSession } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/prisma";
+import { redirect } from "next/navigation";
 import React from "react";
 
 async function getPayments() {
@@ -19,7 +21,10 @@ async function getPayments() {
 
 async function Payments() {
   const payments = await getPayments();
-  console.log(payments);
+  const session = await getSession();
+  if (session.rol != "Administrador") {
+    redirect("/dashboard");
+  }
   return (
     <div className="p-5">
       <PaymentsTable payments={payments} />;
