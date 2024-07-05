@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "../prisma";
 import puppeteer from "puppeteer";
 import { getSession } from "../actions";
+import { ISOStringFormat } from "date-fns";
 
 export type FormState =
   | {
@@ -20,6 +21,14 @@ export async function createCourse(formData: FormData) {
     nombre_curso: formData.get("name")?.toString(),
     monto: Number(formData.get("monto")),
     estatus: formData.get("estatus")?.toString(),
+    fechaInicio:  (() => {
+      const fechaInicio = formData.get('fechaInicio');
+      return fechaInicio ? new Date(fechaInicio.toString()) : null;
+    })(),
+    fechaFin: (() => {
+      const fechaFin = formData.get('fechaFin');
+      return fechaFin ? new Date(fechaFin.toString()) : null;
+    })(),
   };
   const response = await prisma.curso.create({
     data: { ...validateData },
@@ -31,6 +40,14 @@ export async function updateCourse(courseId: number, formData: FormData) {
     nombre_curso: formData.get("name")?.toString(),
     monto: Number(formData.get("monto")),
     estatus: formData.get("estatus")?.toString(),
+    fechaInicio:  (() => {
+      const fechaInicio = formData.get('fechaInicio');
+      return fechaInicio ? new Date(fechaInicio.toString()) : null;
+    })(),
+    fechaFin: (() => {
+      const fechaFin = formData.get('fechaFin');
+      return fechaFin ? new Date(fechaFin.toString()) : null;
+    })(),
   };
 
   const response = await prisma.curso.update({

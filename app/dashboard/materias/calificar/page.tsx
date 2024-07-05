@@ -2,16 +2,11 @@ import { QualificationTable } from "@/app/components/qualification/Qualification
 import { prisma } from "@/app/lib/prisma";
 import React from "react";
 
-async function getQualifications(materia: number, profesor: number) {
+async function getQualifications(materia: number) {
   try {
     const data = await prisma.materia_estudiante.findMany({
       where: {
-        AND: {
-          materia_id: materia,
-          materia: {
-            profesor_id: profesor,
-          },
-        },
+        materia_id: materia,
       },
       include: {
         materia: {
@@ -50,10 +45,7 @@ async function Qualification({
     profesor: string;
   };
 }) {
-  const califications = await getQualifications(
-    parseInt(searchParams.materia),
-    parseInt(searchParams.profesor)
-  );
+  const califications = await getQualifications(parseInt(searchParams.materia));
   const subject = await getSubject(parseInt(searchParams.materia));
   return (
     <div className="p-5">

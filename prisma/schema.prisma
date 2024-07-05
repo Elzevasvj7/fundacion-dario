@@ -37,6 +37,8 @@ model curso {
   periodo      String?       @db.VarChar(255)
   estatus      String?       @db.VarChar(45)
   monto        Float?
+  fechaInicio  DateTime?
+  fechaFin     DateTime?
   inscripcion  inscripcion[]
   materia      materia[]
 }

@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@formkit/tempo": "^0.1.1",
+    "@formkit/tempo": "^0.1.2",
     "@prisma/client": "^5.14.0",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",

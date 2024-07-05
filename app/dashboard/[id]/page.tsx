@@ -1,3 +1,4 @@
+import { AdminData } from "@/app/components/data/AdminData";
 import { StudentData } from "@/app/components/data/StudentData";
 import { TeacherData } from "@/app/components/data/TeacherData";
 import { getSession } from "@/app/lib/actions";
@@ -52,24 +53,32 @@ async function getPayments(user: string) {
   }
 }
 
-async function getTeacher(user: string) {
+async function getAdminData(user: string) {
   try {
-    const data = await prisma.profesor.findFirst({
+    const data = await prisma.usuarios.findFirst({
       where: {
-        usuarios: {
-          usuario: user,
-        },
+        usuario: user,
       },
       include: {
-        usuarios: true,
-        materia: {
-          include: {
-            curso: true,
-          },
-        },
+        rol_usuarios_rolTorol : true
+      }
+    });
+    const courses = await prisma.curso.findMany({
+      include: {
+        inscripcion: true,
+        materia: true
+      }
+    });
+    const payments = await prisma.pagos.findMany({
+      where: {
+        estatus: "pendiente",
       },
     });
-    return data;
+    return {
+      ...data,
+      cursos: [...courses],
+      pagos: [...payments],
+    };
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch teacher");
@@ -96,11 +105,15 @@ async function User({ params: { id } }: { params: { id: string } }) {
   if (session.rol === "Estudiante") {
     const student = await getStudent(id);
     const payments = await getPayments(id);
-    console.log(payments);
     return <StudentData student={student} payments={payments} />;
   }
-  if (session.rol == "Profesor") {
-    const teacher = await getTeacher(id);
+  if (session.rol == "Administrador") {
+    const teacher = await getAdminData(id);
+    console.log(teacher);
+    return <AdminData admin={teacher} />;
+  }
+  if (session.rol == "Secretario") {
+    const teacher = await getAdminData(id);
     return <TeacherData teacher={teacher} />;
   }
 }

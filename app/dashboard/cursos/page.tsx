@@ -16,6 +16,7 @@ async function getData() {
 export default async function Courses() {
   const session = await getSession();
   const data = await getData();
+  console.log(data);
   return (
    <CourseTable courses={data} session={session}/>
   );

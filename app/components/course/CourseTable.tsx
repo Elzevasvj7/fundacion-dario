@@ -6,7 +6,7 @@ import {
   updateCourse,
 } from "@/app/lib/course/actions";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export const CourseTable = ({
   courses,
@@ -20,6 +20,8 @@ export const CourseTable = ({
   const [name, setName] = useState("");
   const [cost, setCost] = useState(0);
   const [status, setStatus] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
 
   const [courseId, setCourseId] = useState(0);
   const [type, setType] = useState(false);
@@ -33,12 +35,13 @@ export const CourseTable = ({
     nombre_curso: string;
     monto: number;
     estatus: string;
+    fechaInicio?: any;
   }) => {
     setCourseId(course.curso_id);
     setName(course.nombre_curso);
     setCost(course.monto);
     setStatus(course.estatus);
-
+    setFechaInicio(course.fechaInicio?.toISOString().split("T")[0]);
     setType(false);
     modalRef.current?.click();
   };
@@ -49,6 +52,11 @@ export const CourseTable = ({
   const handlerCloseModal = () => {
     setCourseId(0);
     setName("");
+    setCost(0);
+    setStatus("");
+    setFechaInicio("");
+    setFechaFin("");
+
     modalRef.current?.click();
   };
   const handlerCreate = (formData: FormData) => {
@@ -65,7 +73,15 @@ export const CourseTable = ({
     deleteUserWithId();
     deleteModal.current?.close();
   };
-  console.log(session);
+  useEffect(() => {
+    if (fechaInicio) {
+      const fechaInicioDate = new Date(fechaInicio);
+      const fechaFinDate = new Date(
+        fechaInicioDate.setMonth(fechaInicioDate.getMonth() + 9)
+      );
+      setFechaFin(fechaFinDate.toISOString().split("T")[0]);
+    }
+  }, [fechaInicio]);
   return (
     <div className=" flex flex-col items-center justify-start w-full p-5 bg">
       <div className="w-full mb-5 card bg-white text-black p-5 flex flex-row items-center gap-2 h-[10%]">
@@ -224,6 +240,38 @@ export const CourseTable = ({
                 className="input input-sm input-bordered w-full bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
                 onChange={(e) => setCost(parseInt(e.target.value))}
                 value={cost}
+              />
+            </label>
+            <label className="form-control w-full ">
+              <div className="label">
+                <span className="text-black text-sm">
+                  Fecha inicio del curso
+                </span>
+              </div>
+              <input
+                required
+                name="fechaInicio"
+                type="date"
+                placeholder="Fecha de inicio"
+                className="input input-sm input-bordered w-full bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+              />
+            </label>
+            <label className="form-control w-full ">
+              <div className="label">
+                <span className="text-black text-sm">
+                  Fecha de finalizacón del curso
+                </span>
+              </div>
+              <input
+                required
+                name="fechaFin"
+                type="date"
+                placeholder="Fecha de finalización"
+                className="input input-sm input-bordered w-full bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
+                value={fechaFin}
+                readOnly
               />
             </label>
             <label className="form-control w-full">

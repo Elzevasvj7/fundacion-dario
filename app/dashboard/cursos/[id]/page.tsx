@@ -1,6 +1,7 @@
 import { EnrollmentCourse } from "@/app/components/enrollment/EnrollmentCourse";
 import { getSession } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/prisma";
+import { format } from "@formkit/tempo";
 import React from "react";
 
 async function getCourse(id: string) {
@@ -93,6 +94,18 @@ async function Course({ params: { id } }: { params: { id: string } }) {
               <h3 className="font-semibold">Costo del curso:</h3>
               <p className="text-black text-2xl">${course?.monto}</p>
             </div>
+            {course?.fechaInicio && (
+              <div>
+                <h3>Fecha de inicio del curso</h3>
+                <p className="text-black">{format(course.fechaInicio, 'full')}</p>
+              </div>
+            )}
+             {course?.fechaFin && (
+              <div>
+                <h3>Fecha de finalización del curso</h3>
+                <p className="text-black">{format(course.fechaFin, 'full')}</p>
+              </div>
+            )}
           </div>
         </div>
         {session.rol === "Estudiante" && enrollment?.estatus === "Activa" && (
@@ -101,7 +114,7 @@ async function Course({ params: { id } }: { params: { id: string } }) {
         {session.rol === "Estudiante" && enrollment?.estatus === "Activa" && (
           <p>Ya tienes un inscripcion activa</p>
         )}
-        {session.rol === "Administrador" &&
+        {session.rol === "Estudiante" &&
           !enrollment &&
           course?.estatus == "Activo" &&
           course.materia.length > 0 && <EnrollmentCourse courseId={id} />}
