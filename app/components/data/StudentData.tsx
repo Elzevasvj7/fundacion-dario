@@ -1,7 +1,10 @@
 "use client";
 import { generateStudentReport } from "@/app/dashboard/alumnos/lib/actions";
 import { Modal } from "@/app/dashboard/components/Modal";
-import { updatePayment } from "@/app/lib/payments/actions";
+import {
+  generateReportPayment,
+  updatePayment,
+} from "@/app/lib/payments/actions";
 import React, { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 
@@ -17,6 +20,8 @@ export const StudentData = ({ student, payments }: any) => {
     email: "",
   });
   const [state, action] = useFormState(generateStudentReport, undefined);
+  const [stateP, actionP] = useFormState(generateReportPayment, undefined);
+
   useEffect(() => {
     if (state?.data) {
       const link = document.createElement("a");
@@ -25,6 +30,14 @@ export const StudentData = ({ student, payments }: any) => {
       link.click();
     }
   }, [state]);
+  useEffect(() => {
+    if (stateP?.data) {
+      const link = document.createElement("a");
+      link.href = `data:application/pdf;base64,${stateP.data}`;
+      link.download = "factura_pago.pdf";
+      link.click();
+    }
+  }, [stateP]);
   const handlerOpenCreateModal = (item: any) => {
     setPayment({ ...payment, id: item.pago_id, cost: item.monto });
     modalRef.current?.click();
@@ -37,12 +50,26 @@ export const StudentData = ({ student, payments }: any) => {
     updatePaymentWithId(formData);
     modalRef.current?.click();
   };
+  const downloadPDF = () => {
+    const link = document.createElement("a");
+    link.href = '/solvencia.docx';
+    link.download = 'solvencia_academica.docx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   return (
     <div>
       <div className="w-full p-5">
         <div className="card bg-white p-5 gap-3">
-          <div className="border-b pb-3 border-slate-300">
+          <div className="border-b pb-3 border-slate-300 flex justify-between items-center">
             <h1 className="text-black">Información personal</h1>
+            <button
+              onClick={downloadPDF}
+              className="btn btn-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
+            >
+              Descargar solvencia academica
+            </button>
           </div>
           <div className="w-full grid grid-cols-2">
             <div>
@@ -152,6 +179,7 @@ export const StudentData = ({ student, payments }: any) => {
                   <h3>
                     Cantidad: <span className="text-xl">${i.monto}</span>
                   </h3>
+                  <p>Curso: {i.inscripcion.curso.nombre_curso}</p>
                   <p>
                     Estatus:{" "}
                     {i.estatus == "Pagado" && (
@@ -182,6 +210,14 @@ export const StudentData = ({ student, payments }: any) => {
                       className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-105 transition duration-300 text-white max-w-xs"
                     >
                       Pagar
+                    </button>
+                  )}
+                  {i.estatus === "Pagado" && (
+                    <button
+                      onClick={() => actionP(i.pago_id)}
+                      className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-105 transition duration-300 text-white max-w-xs"
+                    >
+                      Descargar factura
                     </button>
                   )}
                 </div>

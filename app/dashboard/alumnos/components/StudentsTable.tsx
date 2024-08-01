@@ -4,7 +4,6 @@ import { Modal } from "../../components/Modal";
 import { createStudent, deleteStudent, updateStudent } from "../lib/actions";
 import Link from "next/link";
 
-
 const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
   const modalRef = useRef<HTMLInputElement>(null);
   const deleteModal = useRef<HTMLDialogElement>(null);
@@ -16,7 +15,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [status, setStatus] = useState(0);
+  const [code, setCode] = useState("");
   const [userId, setUserId] = useState(0);
   const [type, setType] = useState(false);
 
@@ -34,6 +33,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
     telefono: string;
     correo: string;
     fecha_nac: string;
+    codigo: string;
   }) => {
     setUserId(alumno.alumno_id);
     setName(alumno.nombre);
@@ -44,15 +44,16 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
     setPhone(alumno.telefono);
     setEmail(alumno.correo);
     setBirthDate(alumno.fecha_nac);
+    setCode(alumno.codigo);
     setType(false);
     modalRef.current?.click();
   };
   const handlerOpenDeleteModal = (id: number) => {
-    setUserId(id)
-    deleteModal.current?.showModal()
-  }
+    setUserId(id);
+    deleteModal.current?.showModal();
+  };
   const handlerCloseModal = () => {
-    setUserId(0)
+    setUserId(0);
     setName("");
     setLastName("");
     setAge(0);
@@ -75,7 +76,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
   };
   const handlerDelete = () => {
     const deleteUserWithId = deleteStudent.bind(null, userId);
-    deleteUserWithId()
+    deleteUserWithId();
     deleteModal.current?.close();
   };
   return (
@@ -94,7 +95,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
         </svg>
         <h1>Lista de alumnos</h1>
         <Link
-        href={'/dashboard/inscripciones/crear-inscripcion'}
+          href={"/dashboard/inscripciones/crear-inscripcion"}
           className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
         >
           Nuevo
@@ -131,6 +132,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
                   correo: string;
                   fecha_nac: string;
                   usuarios: any;
+                  codigo: string;
                 },
                 index
               ) => (
@@ -138,7 +140,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
                   key={index}
                   className="hover:bg-teal-500 hover:text-white cursor-pointer transition duration-500"
                 >
-                  <th>{index + 1}</th>
+                  <th>{item.codigo}</th>
                   <td>{item.nombre}</td>
                   <td>{item.apellido}</td>
                   <td>{item.edad}</td>
@@ -166,6 +168,7 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
                             telefono: item.telefono,
                             correo: item.correo,
                             fecha_nac: item.fecha_nac,
+                            codigo: item.codigo,
                           })
                         }
                         className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300"
@@ -183,7 +186,9 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
                         </svg>
                       </button>
                       <button
-                        onClick={() => handlerOpenDeleteModal(item.usuarios.user_id)}
+                        onClick={() =>
+                          handlerOpenDeleteModal(item.usuarios.user_id)
+                        }
                         className="btn btn-sm bg-red-500 border-none hover:bg-red-600 hover:scale-110 transition duration-300"
                       >
                         <svg
@@ -323,14 +328,17 @@ const StudentsTable = ({ alumnos }: { alumnos: any[] }) => {
                 value={birthDate}
               />
             </label>
-            <label className="form-control w-full">
+            <label className="form-control w-full ">
               <div className="label">
-                <span className="text-black text-sm">Estado</span>
+                <span className="text-black text-sm">Codigo academico</span>
               </div>
-              <select className="select select-sm select-bordered bg-transparent focus:outline-none focus:border-[#009688] transition duration-500">
-                <option>Activo</option>
-                <option>Inactivo</option>
-              </select>
+              <input
+                name="code"
+                type="text"
+                className="input input-sm input-bordered w-full bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
+                onChange={(e) => setCode(e.target.value)}
+                value={code}
+              />
             </label>
             <div className="modal-action justify-center gap-2">
               <button

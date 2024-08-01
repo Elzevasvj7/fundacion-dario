@@ -20,7 +20,6 @@ async function CreateEnrollment() {
   }
   return (
     <div className="p-5">
-      <h1>Crear inscripcion</h1>
       <EnrollmentForm courses={courses} />
     </div>
   );

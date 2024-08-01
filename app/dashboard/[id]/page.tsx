@@ -45,6 +45,11 @@ async function getPayments(user: string) {
           },
         },
       },
+      include: {
+        inscripcion: {
+          include: { curso: true },
+        },
+      },
     });
     return data;
   } catch (error) {
@@ -60,14 +65,14 @@ async function getAdminData(user: string) {
         usuario: user,
       },
       include: {
-        rol_usuarios_rolTorol : true
-      }
+        rol_usuarios_rolTorol: true,
+      },
     });
     const courses = await prisma.curso.findMany({
       include: {
         inscripcion: true,
-        materia: true
-      }
+        materia: true,
+      },
     });
     const payments = await prisma.pagos.findMany({
       where: {
@@ -100,11 +105,11 @@ async function getUser(user: string) {
 }
 
 async function User({ params: { id } }: { params: { id: string } }) {
-  const user = await getUser(id);
   const session = await getSession();
   if (session.rol === "Estudiante") {
     const student = await getStudent(id);
     const payments = await getPayments(id);
+    console.log(payments);
     return <StudentData student={student} payments={payments} />;
   }
   if (session.rol == "Administrador") {

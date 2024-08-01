@@ -31,6 +31,7 @@ const schema = z.object({
     .email({ message: "El correo electrónico debe ser válido." }),
   direccion: z.string({ message: "La dirección es requerida." }),
   cedula: z.string({ message: "La cédula es requerida." }),
+  codigo: z.string()
 });
 
 export async function createStudent(formData: FormData) {
@@ -67,10 +68,10 @@ export async function updateStudent(userId: number, formData: FormData) {
     direccion: formData.get("address") as string,
     correo: formData.get("email") as string,
     cedula: formData.get("cedula") as string,
-    estatus: 1,
+    codigo: formData.get("code") as string,
   });
   console.log("user", userId);
-  console.log(formData);
+  console.log(validateData.data);
   if (!validateData.success) {
     console.log(validateData.error.flatten().fieldErrors);
     return {

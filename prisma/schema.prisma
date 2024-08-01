@@ -11,6 +11,7 @@ model alumnos {
   alumno_id          Int                  @id @default(autoincrement())
   nombre             String?              @db.Text
   apellido           String?              @db.Text
+  codigo             String?
   edad               Int?
   direccion          String?              @db.VarChar(255)
   cedula             String?              @db.VarChar(20)
@@ -22,7 +23,7 @@ model alumnos {
   usuarios           usuarios?            @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "alumno_ibfk_1")
   inscripcion        inscripcion[]
   materia_estudiante materia_estudiante[]
-
+  
   @@index([user_id], map: "alumno_ibfk_1_idx")
 }
 

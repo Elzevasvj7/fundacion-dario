@@ -18,6 +18,7 @@ export async function createEnrollment(formData: FormData) {
         cedula: formData.get("cedula")?.toString(),
         telefono: formData.get("phone")?.toString(),
         correo: formData.get("email")?.toString(),
+        codigo: `CEDV-${formData.get('grade')?.toString()}.${formData.get('cicle')?.toString()}`
       },
     };
     const findUser = await prisma.usuarios.findFirst({

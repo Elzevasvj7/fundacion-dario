@@ -47,7 +47,8 @@ const EnrollmentForm = ({ courses }: { courses: any[] }) => {
     fecha_nac: "",
     status: 1,
   });
-  const [course, setCourse] = useState(0);
+  const [grade, setGrade] = useState(1);
+  const [cicle, setCicle] = useState(1);
   const [data, setData] = useState();
   const [error, setError] = useState("");
   const handlerSetUser = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +73,8 @@ const EnrollmentForm = ({ courses }: { courses: any[] }) => {
   };
   return (
     <div className="w-full card bg-white p-5">
+      <h1 className="text-black">Crear inscripcion</h1>
+      <br />
       <form action={handlerCreateEnrollment} className="grid grid-cols-2 gap-5">
         <label className="form-control w-full text-black">
           <div className="label">
@@ -294,39 +297,63 @@ const EnrollmentForm = ({ courses }: { courses: any[] }) => {
             />
           </div>
         </label> */}
-        {/* <div className="col-span-2">
-          <h2>Datos del curso</h2>
+        <div className="col-span-2">
+          <h2>Datos academicos</h2>
         </div>
         <label className="form-control w-full">
           <div className="label">
-            <span className="text-black text-sm after:text-red-500">Curso</span>
+            <span className="text-black text-sm after:text-red-500">
+              Grado academico
+            </span>
           </div>
           <select
             required
-            name="course"
+            name="grade"
             onChange={({ target }) => {
-              setCourse(Number(target.value));
+              setGrade(Number(target.value));
             }}
-            value={course ? course : "Selecciona un curso"}
+            value={grade ? grade : "Selecciona un grado"}
             className="select select-sm select-bordered bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
           >
-            <option disabled>Selecciona un curso</option>
-            {courses.map((course, index) => (
-              <option
-                key={index}
-                value={course.curso_id}
-                className="text-black"
-              >
-                {course.nombre_curso}
-              </option>
-            ))}
+            <option disabled>Selecciona un grado</option>
+            <option value={1} className="text-black">
+              Licenciatura
+            </option>
+            <option value={2} className="text-black">
+              Magister
+            </option>
+            <option value={3} className="text-black">
+              Doctorado
+            </option>
           </select>
-          {errors.course && (
-            <div className="label">
-              <span className="text-red-500 text-sm">{errors.course}</span>
-            </div>
-          )}
-        </label> */}
+        </label>
+        <label className="form-control w-full">
+          <div className="label">
+            <span className="text-black text-sm after:text-red-500">
+              Ciclo academico
+            </span>
+          </div>
+          <select
+            required
+            name="cicle"
+            onChange={({ target }) => {
+              setCicle(Number(target.value));
+            }}
+            value={cicle ? cicle : "Selecciona un ciclo"}
+            className="select select-sm select-bordered bg-transparent focus:outline-none focus:border-[#009688] transition duration-500"
+          >
+            <option disabled>Selecciona un ciclo</option>
+            <option value={1} className="text-black">
+              Ciclo 1
+            </option>
+            <option value={2} className="text-black">
+              Ciclo 2
+            </option>
+            <option value={3} className="text-black">
+              Ciclo 3
+            </option>
+          </select>
+        </label>
         <div className="col-span-2">
           <SubmmitButton />
         </div>
