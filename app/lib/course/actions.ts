@@ -3,7 +3,6 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "../prisma";
 import puppeteer from "puppeteer";
 import { getSession } from "../actions";
-import { ISOStringFormat } from "date-fns";
 
 export type FormState =
   | {
@@ -16,17 +15,26 @@ export type FormState =
     }
   | undefined;
 
+export async function getCourses() {
+  try {
+    const data = await prisma.curso.findMany();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch courses");
+  }
+}
+
 export async function createCourse(formData: FormData) {
   const validateData = {
     nombre_curso: formData.get("name")?.toString(),
     monto: Number(formData.get("monto")),
     estatus: formData.get("estatus")?.toString(),
-    fechaInicio:  (() => {
-      const fechaInicio = formData.get('fechaInicio');
+    fechaInicio: (() => {
+      const fechaInicio = formData.get("fechaInicio");
       return fechaInicio ? new Date(fechaInicio.toString()) : null;
     })(),
     fechaFin: (() => {
-      const fechaFin = formData.get('fechaFin');
+      const fechaFin = formData.get("fechaFin");
       return fechaFin ? new Date(fechaFin.toString()) : null;
     })(),
   };
@@ -40,12 +48,12 @@ export async function updateCourse(courseId: number, formData: FormData) {
     nombre_curso: formData.get("name")?.toString(),
     monto: Number(formData.get("monto")),
     estatus: formData.get("estatus")?.toString(),
-    fechaInicio:  (() => {
-      const fechaInicio = formData.get('fechaInicio');
+    fechaInicio: (() => {
+      const fechaInicio = formData.get("fechaInicio");
       return fechaInicio ? new Date(fechaInicio.toString()) : null;
     })(),
     fechaFin: (() => {
-      const fechaFin = formData.get('fechaFin');
+      const fechaFin = formData.get("fechaFin");
       return fechaFin ? new Date(fechaFin.toString()) : null;
     })(),
   };
@@ -130,7 +138,7 @@ export async function generateReportCourses(
             profesor: true,
             materia_estudiante: {
               include: {
-                alumno: true,
+                alumnos: true,
               },
             },
           },

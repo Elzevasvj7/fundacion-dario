@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ConfigProvider } from "antd";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <ConfigProvider
+        theme={{
+          components: {
+            Menu: {
+              itemHoverColor: "#ef4444",
+              itemSelectedBg: '',
+              itemSelectedColor: '#ef4444',
+              itemActiveBg: '#ef4444',
+            },
+            Layout: {
+              triggerBg: '#ef4444'
+            }
+          },
+        }}
+      >
+        <body className={inter.className}>{children}</body>
+      </ConfigProvider>
     </html>
   );
 }

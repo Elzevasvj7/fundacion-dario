@@ -2,6 +2,8 @@ import React from "react";
 import Sidebar from "./components/Sidebar";
 import { getSession, logout } from "../lib/actions";
 import Link from "next/link";
+import { Layout } from "antd";
+import { Content } from "antd/es/layout/layout";
 
 export default async function DashboardLayaout({
   children,
@@ -10,9 +12,9 @@ export default async function DashboardLayaout({
 }) {
   const session = await getSession();
   return (
-    <div className="h-full w-full">
-      <header className="h-[8%] w-full z-[1030] flex items-center">
-        <div className="navbar h-full min-h-full bg-[#009688]">
+    <Layout style={{minHeight: '100vh'}}>
+      <header className="w-full z-[1030] flex items-center">
+        <div className="navbar h-full min-h-full bg-red-500">
           <div className="flex-1">
             <a className="btn btn-ghost text-white text-xl">EL COMPA</a>
           </div>
@@ -62,10 +64,10 @@ export default async function DashboardLayaout({
           </div>
         </div>
       </header>
-      <main className="flex h-[92%] bg-[#E5E5E5] w-full">
+      <Layout>
         <Sidebar user={session} />
-        <div className="w-full overflow-y-auto">{children}</div>
-      </main>
-    </div>
+        <Content>{children}</Content>
+      </Layout>
+    </Layout>
   );
 }

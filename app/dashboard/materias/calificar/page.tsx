@@ -14,7 +14,7 @@ async function getQualifications(materia: number) {
             curso: true,
           },
         },
-        alumno: true,
+        alumnos: true,
       },
     });
     return data;
@@ -47,6 +47,7 @@ async function Qualification({
 }) {
   const califications = await getQualifications(parseInt(searchParams.materia));
   const subject = await getSubject(parseInt(searchParams.materia));
+  console.log(califications);
   return (
     <div className="p-5">
       <QualificationTable

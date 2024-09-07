@@ -1,6 +1,7 @@
 "use client";
-import { Modal } from "@/app/dashboard/components/Modal";
+import { ModalComponent } from "@/app/dashboard/components/Modal";
 import { createUser, updateUser } from "@/app/lib/users/actions";
+import { Table, TableProps } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
@@ -19,25 +20,26 @@ const SubmmitButton = () => {
 };
 
 export const UsersTable = ({ users }: any) => {
-  const modalRef = useRef<HTMLInputElement>(null);
-  const deleteModal = useRef<HTMLDialogElement>(null);
-  const updateModal = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
+
+  const [updateModal, setUpdateModal] = useState<boolean>(false);
 
   const handlerOpenCreateModal = () => {
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerOpenUpdateModal = (user: any) => {
     setUser(user);
-    updateModal.current?.showModal();
+    setUpdateModal(!updateModal);
   };
   const handlerCreateUser = (formData: FormData) => {
     action(formData);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerUpdate = (formData: FormData) => {
     // const updateUserWithId = updateCourse.bind(null, courseId);
     // updateUserWithId(formData);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerDelete = () => {
     // const deleteUserWithId = deleteCourse.bind(null, courseId);
@@ -63,6 +65,71 @@ export const UsersTable = ({ users }: any) => {
       setSuccess("");
     }
   }, [stateUpdate]);
+
+  const columns: TableProps<any>["columns"] = [
+    {
+      title: "",
+      dataIndex: "id",
+      key: "id",
+      render: (_, record) => (
+        <div>{record.usuario_id}</div>
+      ),
+    },
+    {
+      title: "Usuario",
+      dataIndex: "usuario",
+      key: "usuario",
+    },
+    {
+      title: "Rol",
+      dataIndex: "rol",
+      key: "rol",
+      render: (_, record) => (
+        <div>{record.rol_usuarios_rolTorol?.nombre_rol}</div>
+      ),
+    },
+    {
+      title: "Acciones",
+      key: "action",
+      render: (_, record) => (
+        <div className="flex gap-2">
+          <button
+            onClick={() => handlerOpenUpdateModal(record)}
+            className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#ffffff"
+                d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"
+              />
+            </svg>
+          </button>
+          <button
+            // onClick={() => handlerOpenDeleteModal(record.materia_id)}
+            className="btn btn-sm bg-red-500 border-none hover:bg-red-600 hover:scale-110 transition duration-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 256 256"
+            >
+              <path
+                fill="#ffffff"
+                d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16M112 168a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm0-120H96v-8a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8Z"
+              />
+            </svg>
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="h-full flex flex-col items-center justify-start w-full p-5 bg">
       <div className="w-full mb-5 bg-white text-black p-5 flex items-center gap-2 h-[10%]">
@@ -79,14 +146,14 @@ export const UsersTable = ({ users }: any) => {
         </svg>
         <h1>Lista de usuarios</h1>
         <button
-          onClick={() => modalRef.current?.click()}
+          onClick={() => setOpen(!open)}
           className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none"
         >
           Nuevo
         </button>
       </div>
       <div className="overflow-x-auto bg-white text-black w-full h-[90%]">
-        <table className="table w-full h-full">
+        {/* <table className="table w-full h-full">
           <thead className="[&>tr]:border-none">
             <tr>
               <th>ID</th>
@@ -140,19 +207,17 @@ export const UsersTable = ({ users }: any) => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+        <Table dataSource={users} columns={columns} />
       </div>
-      <input type="checkbox" ref={modalRef} className="modal-toggle" />
-      <Modal>
-        <div className="h-[10%]">
+
+      <ModalComponent open={open}>
+        <div className="">
           <h3 className="text-center font-bold text-lg text-[#009688]">
             Nuevo Usuario
           </h3>
         </div>
-        <form
-          action={handlerCreateUser}
-          className="overflow-x-auto h-[90%] p-1"
-        >
+        <form action={handlerCreateUser} className="">
           <label className="form-control w-full ">
             <div className="label">
               <span className="text-black text-sm">Usuario</span>
@@ -197,22 +262,22 @@ export const UsersTable = ({ users }: any) => {
               Guardar
             </button>
             <label
-              onClick={() => modalRef.current?.click()}
+              onClick={() => setOpen(!open)}
               className="btn btn-sm rounded-sm bg-red-500 hover:bg-red-600 hover:scale-110 transition duration-500 text-white border-none"
             >
               Cancelar
             </label>
           </div>
         </form>
-      </Modal>
-      <dialog ref={updateModal} className="modal">
-        <div className="modal-box h-auto bg-slate-50 p-5">
-          <div className="h-[10%]">
+      </ModalComponent>
+      <ModalComponent open={updateModal}>
+        <div className="h-auto bg-slate-50">
+          <div className="">
             <h3 className="text-center font-bold text-lg text-[#009688]">
               Actualizar usuario
             </h3>
           </div>
-          <form action={actionUpdate} className="overflow-x-auto h-[90%] p-1">
+          <form action={actionUpdate} className=" p-1">
             <input
               type="number"
               placeholder="Usuario"
@@ -259,7 +324,7 @@ export const UsersTable = ({ users }: any) => {
               <SubmmitButton />
               <label
                 onClick={() => {
-                  updateModal.current?.close();
+                  setUpdateModal(!updateModal);
                   setSuccess("");
                   setErr("");
                 }}
@@ -270,26 +335,27 @@ export const UsersTable = ({ users }: any) => {
             </div>
           </form>
         </div>
-      </dialog>
-      <dialog ref={deleteModal} className="modal">
-        <div className="modal-box h-auto bg-slate-50 p-5">
+      </ModalComponent>
+      <ModalComponent open={deleteModal}>
+        <div className="h-auto bg-slate-50 p-5">
           <h3 className="text-center font-bold text-lg text-[#009688]">
             ¿Seguro que quieres eliminar este curso?
           </h3>
-          <div className="modal-action justify-center">
+          <div className="justify-center">
             <form action={handlerDelete}>
               <button className="btn btn-sm rounded-sm bg-[#009688] hover:bg-teal-500 hover:scale-110 transition duration-500 text-white border-none">
                 Eliminar
               </button>
             </form>
-            <form method="dialog">
-              <button className="btn btn-sm rounded-sm bg-red-500 hover:bg-red-600 hover:scale-110 transition duration-500 text-white border-none">
-                Cerrar
-              </button>
-            </form>
+            <button
+              onClick={() => setDeleteModal(!deleteModal)}
+              className="btn btn-sm rounded-sm bg-red-500 hover:bg-red-600 hover:scale-110 transition duration-500 text-white border-none"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
-      </dialog>
+      </ModalComponent>
       {state?.message && (
         <div role="alert" className="alert alert-success my-4 text-white">
           <svg
@@ -305,7 +371,7 @@ export const UsersTable = ({ users }: any) => {
               d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>Estudiante creado satisfactoriamente</span>
+          <span>Usuario creado satisfactoriamente</span>
         </div>
       )}
       {state?.error && (

@@ -1,6 +1,6 @@
 "use client";
 import { generateStudentReport } from "@/app/dashboard/alumnos/lib/actions";
-import { Modal } from "@/app/dashboard/components/Modal";
+import { ModalComponent } from "@/app/dashboard/components/Modal";
 import {
   generateReportPayment,
   updatePayment,
@@ -10,6 +10,7 @@ import { useFormState } from "react-dom";
 
 export const StudentData = ({ student, payments }: any) => {
   const modalRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false)
   const [payment, setPayment] = useState({
     id: 0,
     ref: "",
@@ -40,15 +41,15 @@ export const StudentData = ({ student, payments }: any) => {
   }, [stateP]);
   const handlerOpenCreateModal = (item: any) => {
     setPayment({ ...payment, id: item.pago_id, cost: item.monto });
-    modalRef.current?.click();
+    setOpen(!open)
   };
   const handlerCloseModal = () => {
-    modalRef.current?.click();
+    setOpen(!open)
   };
   const handlerUpdate = (formData: FormData) => {
     const updatePaymentWithId = updatePayment.bind(null, payment.id);
     updatePaymentWithId(formData);
-    modalRef.current?.click();
+    setOpen(!open)
   };
   const downloadPDF = () => {
     const link = document.createElement("a");
@@ -116,12 +117,12 @@ export const StudentData = ({ student, payments }: any) => {
                   <h3>{i.curso.nombre_curso}</h3>
                   <p>
                     Estatus:{" "}
-                    {true && (
+                    {i.estatus == "activo"  && (
                       <span className="badge bg-green-500 text-white border-none">
                         Activo
                       </span>
                     )}
-                    {i.estatus == "Inactivo" && (
+                    {i.estatus == "inactivo" && (
                       <span className="badge bg-red-500 text-white border-none">
                         Activo
                       </span>
@@ -230,8 +231,7 @@ export const StudentData = ({ student, payments }: any) => {
           )}
         </div>
       </div>
-      <input type="checkbox" ref={modalRef} className="modal-toggle" />
-      <Modal>
+      <ModalComponent open={open}>
         <div className="h-[10%]">
           <h3 className="text-center font-bold text-lg text-[#009688]">
             Realizar pago
@@ -350,7 +350,7 @@ export const StudentData = ({ student, payments }: any) => {
             </div>
           </form>
         </div>
-      </Modal>
+      </ModalComponent>
     </div>
   );
 };

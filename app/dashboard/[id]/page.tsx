@@ -7,7 +7,6 @@ import React from "react";
 
 async function getStudent(user: string) {
   try {
-    const session = await getSession();
     const data = await prisma.alumnos.findFirst({
       where: {
         usuarios: {
@@ -26,6 +25,7 @@ async function getStudent(user: string) {
         },
       },
     });
+    console.log(user,data);
     return data;
   } catch (error) {
     console.log(error);
@@ -110,6 +110,7 @@ async function User({ params: { id } }: { params: { id: string } }) {
     const student = await getStudent(id);
     const payments = await getPayments(id);
     console.log(payments);
+    console.log("SS",student);
     return <StudentData student={student} payments={payments} />;
   }
   if (session.rol == "Administrador") {

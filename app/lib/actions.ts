@@ -52,8 +52,7 @@ export async function signIn(state: FormState, formData: FormData) {
   }
   const hash = user.password ? user.password : "";
   console.log(hash);
-  const match = await bcrypt.compare(validatedFields.password, hash);
-  if (!match) {
+  if (hash != validatedFields.password) {
     return {
       message: "Usuario o contraseña incorrectos",
     };

@@ -33,13 +33,11 @@ export async function createEnrollment(formData: FormData) {
     if (findStudent) {
       throw new Error("La cedula de este estudiante ya existe");
     }
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(validateData.user.password, salt);
     const user = await prisma.usuarios.create({
       data: {
         ...validateData.user,
-        password: hash,
-        rol: 3
+        password: validateData.user.password,
+        rol: 2
       },
     });
     const student = await prisma.alumnos.create({

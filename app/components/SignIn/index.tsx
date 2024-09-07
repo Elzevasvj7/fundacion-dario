@@ -9,7 +9,7 @@ const SubmmitButton = () => {
   const { pending } = useFormStatus();
   return (
     <button
-      className="btn bg-[#153744] hover:bg-[#336666] w-full border-none transition duration-500 text-white"
+      className="btn bg-blue-500 hover:bg-blue-600 w-full border-none transition duration-500 text-white"
       disabled={pending}
       type="submit"
     >
@@ -27,12 +27,12 @@ const SignIn = () => {
   return (
     <div>
       <div className="my-5">
-        <h1 className="text-center font-semibold text-3xl text-[#336666]">
+        <h1 className="text-center font-semibold text-3xl text-white">
           Iniciar sesion
         </h1>
       </div>
       <form
-        className="card w-96 bg-transparent text-neutral-content border-2 border-[#336666]"
+        className="card w-96 bg-white text-neutral-content border-2 border-white"
         action={action}
       >
         <div className="card-body items-center text-center">
@@ -56,7 +56,7 @@ const SignIn = () => {
                 onChange={(e) => setUser(e.target.value)}
                 required
                 type="text"
-                className="input input-sm w-full input-bordered bg-transparent flex items-center gap-2 focus:outline-none focus:border-[#336666] transition duration-500"
+                className="input input-sm w-full input-bordered bg-transparent flex items-center gap-2 focus:outline-none transition duration-500"
                 placeholder="Usuario"
                 value={user}
               />
@@ -86,7 +86,7 @@ const SignIn = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 type="password"
-                className="input input-sm w-full input-bordered bg-transparent flex items-center gap-2 focus:outline-none focus:border-2 focus:border-[#336666] transition duration-500"
+                className="input input-sm w-full input-bordered bg-transparent flex items-center gap-2 focus:outline-none transition duration-500"
                 placeholder="Contraseña"
                 value={password}
               />

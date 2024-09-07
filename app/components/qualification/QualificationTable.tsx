@@ -89,7 +89,7 @@ export const QualificationTable = ({ q, subject, teacher }: any) => {
                 <tr key={index}>
                   <th>{index + 1}</th>
                   <td>
-                    {c.alumno?.nombre} {c.alumno?.apellido}
+                    {c.alumnos?.nombre} {c.alumnos?.apellido}
                   </td>
                   <td>
                     <div className="max-w-20">

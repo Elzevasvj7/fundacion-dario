@@ -1,5 +1,5 @@
 "use client";
-import { Modal } from "@/app/dashboard/components/Modal";
+import { ModalComponent } from "@/app/dashboard/components/Modal";
 import {
   generateReportPayment,
   updatePayment,
@@ -9,8 +9,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 
 export const PaymentsTable = ({ payments }: { payments: any[] }) => {
-  const deleteModal = useRef<HTMLDialogElement>(null);
-  const modalRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
+
   const [payment, setPayment] = useState({
     id: 0,
     ref: "",
@@ -33,15 +34,15 @@ export const PaymentsTable = ({ payments }: { payments: any[] }) => {
       lastName: item.apellido,
       email: item.email,
     });
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerCloseModal = () => {
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerUpdate = (formData: FormData) => {
     const updatePaymentWithId = updatePaymentAdmin.bind(null, payment.id);
     updatePaymentWithId(formData);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const [state, action] = useFormState(generateReportPayment, undefined);
   useEffect(() => {
@@ -128,8 +129,7 @@ export const PaymentsTable = ({ payments }: { payments: any[] }) => {
           </tbody>
         </table>
       </div>
-      <input type="checkbox" ref={modalRef} className="modal-toggle" />
-      <Modal>
+      <ModalComponent open={open}>
         <div className="h-[10%]">
           <h3 className="text-center font-bold text-lg text-[#009688]">
             Datos del pago
@@ -209,7 +209,7 @@ export const PaymentsTable = ({ payments }: { payments: any[] }) => {
             </div>
           </form>
         </div>
-      </Modal>
+      </ModalComponent>
     </div>
   );
 };

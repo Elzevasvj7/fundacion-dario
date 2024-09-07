@@ -1,7 +1,10 @@
+import { Date } from "@/app/components/Date";
 import { EnrollmentCourse } from "@/app/components/enrollment/EnrollmentCourse";
 import { getSession } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/prisma";
 import { format } from "@formkit/tempo";
+import { Calendar } from "antd";
+import dayjs from "dayjs";
 import React from "react";
 
 async function getCourse(id: string) {
@@ -58,7 +61,7 @@ async function Course({ params: { id } }: { params: { id: string } }) {
     session.rol === "Estudiante"
       ? await getEnrollment(id, session.userId)
       : null;
-
+  console.log("COURSE", course);
   return (
     <div className="w-full p-5">
       <div className="card bg-white p-5 gap-3">
@@ -78,12 +81,12 @@ async function Course({ params: { id } }: { params: { id: string } }) {
             <div>
               <h3 className="font-semibold">Estatus del curso:</h3>
               <p>
-                {course?.estatus == "Activo" && (
+                {course?.estatus == "activo" && (
                   <span className="badge bg-green-500 text-white border-none">
                     Activo
                   </span>
                 )}
-                {course?.estatus == "Inactivo" && (
+                {course?.estatus == "inactivo" && (
                   <span className="badge bg-red-500 text-white border-none">
                     Inactivo
                   </span>
@@ -94,29 +97,35 @@ async function Course({ params: { id } }: { params: { id: string } }) {
               <h3 className="font-semibold">Costo del curso:</h3>
               <p className="text-black text-2xl">${course?.monto}</p>
             </div>
-            {course?.fechaInicio && (
-              <div>
+            {course?.fechainicio && (
+              <div className="w-full">
                 <h3>Fecha de inicio del curso</h3>
-                <p className="text-black">{format(course.fechaInicio, 'full')}</p>
+
+                <div className="">
+                  <Date date={course.fechainicio} />
+                </div>
               </div>
             )}
-             {course?.fechaFin && (
-              <div>
+            {course?.fechafin && (
+              <div className="w-full">
                 <h3>Fecha de finalización del curso</h3>
-                <p className="text-black">{format(course.fechaFin, 'full')}</p>
+                <div className="">
+                  <Date date={course.fechafin} />
+                </div>
               </div>
             )}
+            <div className="col-span-2"></div>
           </div>
         </div>
-        {session.rol === "Estudiante" && enrollment?.estatus === "Activa" && (
+        {session.rol === "Estudiante" && enrollment?.estatus === "activo" && (
           <p>Ya tienes un inscripcion activa</p>
         )}
-        {session.rol === "Estudiante" && enrollment?.estatus === "Activa" && (
+        {session.rol === "Estudiante" && enrollment?.estatus === "activo" && (
           <p>Ya tienes un inscripcion activa</p>
         )}
         {session.rol === "Estudiante" &&
           !enrollment &&
-          course?.estatus == "Activo" &&
+          course?.estatus == "activo" &&
           course.materia.length > 0 && <EnrollmentCourse courseId={id} />}
         {session.rol === "Estudiante" &&
           enrollment?.estatus === "Pendiente" && (

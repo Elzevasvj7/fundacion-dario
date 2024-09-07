@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
     "@formkit/tempo": "^0.1.2",
     "@prisma/client": "^5.14.0",
+    "antd": "^5.20.5",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "date-fns": "^3.6.0",
+    "dayjs": "^1.11.13",
     "iron-session": "^8.0.1",
     "next": "14.1.4",
     "puppeteer": "^22.12.0",

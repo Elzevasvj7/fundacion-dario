@@ -14,9 +14,9 @@ export default function Home() {
             className="h-full w-11/12"
           />
         </div>
-        <div className="h-full w-1/2 flex flex-col justify-center items-center">
+        <div className="h-full w-1/2 flex flex-col justify-center items-center bg-red-500">
           <div>
-            <SignIn/>
+            <SignIn />
           </div>
         </div>
       </div>

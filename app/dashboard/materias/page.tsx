@@ -43,6 +43,7 @@ export default async function Subjects() {
   if (session.rol != "Administrador") {
     redirect("/dashboard");
   }
+  console.log(subjects)
   return (
     <SubjectsTable subjects={subjects} teachers={teachers} courses={courses} />
   );

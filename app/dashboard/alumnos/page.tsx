@@ -20,6 +20,7 @@ export default async function Students() {
   if (session.rol != "Administrador") {
     redirect("/dashboard");
   }
+  console.log(data);
   return (
     <div className="h-full w-full p-5 relative">
       <StudentsTable alumnos={data} />

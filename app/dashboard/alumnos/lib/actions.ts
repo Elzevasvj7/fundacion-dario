@@ -31,7 +31,7 @@ const schema = z.object({
     .email({ message: "El correo electrónico debe ser válido." }),
   direccion: z.string({ message: "La dirección es requerida." }),
   cedula: z.string({ message: "La cédula es requerida." }),
-  codigo: z.string()
+  codigo: z.string(),
 });
 
 export async function createStudent(formData: FormData) {
@@ -85,11 +85,8 @@ export async function updateStudent(userId: number, formData: FormData) {
   revalidatePath("/dashboard/alumnos");
 }
 export async function deleteStudent(userId: number) {
-  const user = await prisma.usuarios.findUnique({
+  const deleteStudent = await prisma.usuarios.delete({
     where: { user_id: userId },
-  });
-  const deleteStudent = await prisma.alumnos.delete({
-    where: { user_id: user?.user_id },
   });
   revalidatePath("/dashboard/alumnos");
 }
@@ -113,7 +110,7 @@ export async function generateStudentReport() {
                     profesor: true,
                     materia_estudiante: {
                       where: {
-                        alumno: { usuarios: { user_id: session.userId } },
+                        alumnos: { usuarios: { user_id: session.userId } },
                       },
                     },
                   },

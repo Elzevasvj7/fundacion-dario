@@ -1,10 +1,11 @@
 "use client";
-import { Modal } from "@/app/dashboard/components/Modal";
+// import { Modal } from "@/app/dashboard/components/Modal";
 import {
   createSubject,
   deleteSubject,
   updateSubject,
 } from "@/app/lib/subjects/actions";
+import { Modal, Table, TableProps } from "antd";
 import React, { useRef, useState } from "react";
 
 export const SubjectsTable = ({
@@ -16,8 +17,8 @@ export const SubjectsTable = ({
   courses: any[];
   teachers: any[];
 }) => {
-  const modalRef = useRef<HTMLInputElement>(null);
-  const deleteModal = useRef<HTMLDialogElement>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [name, setName] = useState("");
   const [teacher, setTeacher] = useState(0);
   const [course, setCourse] = useState(0);
@@ -25,8 +26,12 @@ export const SubjectsTable = ({
   const [type, setType] = useState(false);
 
   const handlerOpenCreateModal = () => {
+    setSubjectId(0);
+    setName("");
+    setCourse(0);
+    setTeacher(0);
     setType(true);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerOpenUpdateModal = (subject: {
     curso_id: number;
@@ -39,33 +44,98 @@ export const SubjectsTable = ({
     setTeacher(subject.profesor_id);
     setCourse(subject.curso_id);
     setType(false);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerOpenDeleteModal = (id: number) => {
     setSubjectId(id);
-    deleteModal.current?.showModal();
+    setDeleteModal(!deleteModal);
   };
   const handlerCloseModal = () => {
     setSubjectId(0);
     setName("");
     setCourse(0);
     setTeacher(0);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerCreate = (formData: FormData) => {
     createSubject(formData);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerUpdate = (formData: FormData) => {
     const updateSubjectWithId = updateSubject.bind(null, subjectId);
     updateSubjectWithId(formData);
-    modalRef.current?.click();
+    setOpen(!open);
   };
   const handlerDelete = () => {
     const deleteSubjectWithId = deleteSubject.bind(null, subjectId);
     deleteSubjectWithId();
-    deleteModal.current?.close();
+    setDeleteModal(!deleteModal);
   };
+
+  const columns: TableProps<any>["columns"] = [
+    {
+      title: "Nombre",
+      dataIndex: "nombre",
+      key: "nombre",
+    },
+    {
+      title: "Profesor",
+      dataIndex: "teacher",
+      key: "teacher",
+      render: (_, record) => (
+        <div>
+          {record.profesor.nombre} {record.profesor.apellido}
+        </div>
+      ),
+    },
+    {
+      title: "Curso",
+      dataIndex: "curso",
+      key: "curso",
+      render: (_, record) => <div>{record.curso.nombre_curso}</div>,
+    },
+    {
+      title: "Acciones",
+      key: "action",
+      render: (_, record) => (
+        <div className="flex gap-2">
+          <button
+            onClick={() => handlerOpenUpdateModal(record)}
+            className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#ffffff"
+                d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={() => handlerOpenDeleteModal(record.materia_id)}
+            className="btn btn-sm bg-red-500 border-none hover:bg-red-600 hover:scale-110 transition duration-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 256 256"
+            >
+              <path
+                fill="#ffffff"
+                d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16M112 168a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm0-120H96v-8a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8Z"
+              />
+            </svg>
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="h-full flex flex-col items-center justify-start w-full p-5 bg">
       <div className="w-full mb-5 bg-white text-black p-5 flex items-center gap-2 h-[10%]">
@@ -97,79 +167,12 @@ export const SubjectsTable = ({
         </button>
       </div>
       <div className="overflow-x-auto bg-white text-black w-full h-[90%]">
-        <table className="table w-full h-full">
-          <thead className="[&>tr]:border-none">
-            <tr>
-              <th>ID</th>
-              <th>Nombre de la materia</th>
-              <th>Profesor</th>
-              <th>Curso</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="[&>tr]:border-none">
-            {subjects.map((item, index) => (
-              <tr
-                key={index}
-                className="hover:bg-teal-500 hover:text-white cursor-pointer transition duration-500"
-              >
-                <th>{index + 1}</th>
-                <td>{item.nombre}</td>
-                <td>
-                  {" "}
-                  {item.profesor && item.profesor.nombre}{" "}
-                  {item.profesor && item.profesor.apellido}
-                </td>
-                <td className="text-center">
-                  {item.curso ? item.curso.nombre_curso : "-"}
-                </td>
-
-                <td>
-                  <div className="flex gap-2 items-center">
-                    <button
-                      onClick={() => handlerOpenUpdateModal(item)}
-                      className="btn btn-sm bg-blue-500 hover:bg-blue-400 border-none hover:scale-110 transition duration-300"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="#ffffff"
-                          d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => handlerOpenDeleteModal(item.materia_id)}
-                      className="btn btn-sm bg-red-500 border-none hover:bg-red-600 hover:scale-110 transition duration-300"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 256 256"
-                      >
-                        <path
-                          fill="#ffffff"
-                          d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16M112 168a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm0-120H96v-8a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8Z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table dataSource={subjects} columns={columns} />
       </div>
-      <input type="checkbox" ref={modalRef} className="modal-toggle" />
-      <Modal>
+      <Modal centered open={open} footer={null}>
         <div className="h-[10%]">
           <h3 className="text-center font-bold text-lg text-[#009688]">
-            Nueva materia
+            {type ? "Nueva" : "Editar"} materia
           </h3>
         </div>
         <div className="overflow-x-auto h-[90%] p-1">
@@ -251,8 +254,8 @@ export const SubjectsTable = ({
           </form>
         </div>
       </Modal>
-      <dialog ref={deleteModal} className="modal">
-        <div className="modal-box h-auto bg-slate-50 p-5">
+      <Modal open={deleteModal} centered footer={null}>
+        <div className="h-auto bg-slate-50 p-5">
           <h3 className="text-center font-bold text-lg text-[#009688]">
             ¿Seguro que quieres eliminar esta materia?
           </h3>
@@ -262,14 +265,15 @@ export const SubjectsTable = ({
                 Eliminar
               </button>
             </form>
-            <form method="dialog">
-              <button className="btn btn-sm rounded-sm bg-red-500 hover:bg-red-600 hover:scale-110 transition duration-500 text-white border-none">
-                Cerrar
-              </button>
-            </form>
+            <button
+              onClick={() => setDeleteModal(!deleteModal)}
+              className="btn btn-sm rounded-sm bg-red-500 hover:bg-red-600 hover:scale-110 transition duration-500 text-white border-none"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
-      </dialog>
+      </Modal>
     </div>
   );
 };

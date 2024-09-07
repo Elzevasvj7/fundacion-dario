@@ -3,28 +3,28 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model alumnos {
   alumno_id          Int                  @id @default(autoincrement())
-  nombre             String?              @db.Text
-  apellido           String?              @db.Text
-  codigo             String?
+  nombre             String?
+  apellido           String?
+  codigo             String?              @db.VarChar(255)
   edad               Int?
   direccion          String?              @db.VarChar(255)
   cedula             String?              @db.VarChar(20)
   telefono           String?              @db.VarChar(255)
   correo             String?              @db.VarChar(255)
   fecha_nac          DateTime?            @db.Date
-  estatus            Int                  @default(1)
-  user_id            Int?                 @unique(map: "user_id_UNIQUE")
-  usuarios           usuarios?            @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "alumno_ibfk_1")
+  estatus            String?              
+  user_id            Int?                 @unique
+  usuarios           usuarios?            @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id")
   inscripcion        inscripcion[]
   materia_estudiante materia_estudiante[]
-  
-  @@index([user_id], map: "alumno_ibfk_1_idx")
+
+  @@index([user_id], map: "idx_user_id")
 }
 
 model aula {
@@ -38,8 +38,8 @@ model curso {
   periodo      String?       @db.VarChar(255)
   estatus      String?       @db.VarChar(45)
   monto        Float?
-  fechaInicio  DateTime?
-  fechaFin     DateTime?
+  fechainicio  DateTime?     @db.Date
+  fechafin     DateTime?     @db.Date
   inscripcion  inscripcion[]
   materia      materia[]
 }
@@ -50,44 +50,28 @@ model inscripcion {
   curso_id       Int?
   turno_id       Int
   estatus        String?  @db.VarChar(45)
-  curso          curso?   @relation(fields: [curso_id], references: [curso_id], onDelete: NoAction, onUpdate: NoAction, map: "inscripcion_ibfk_1")
-  alumnos        alumnos? @relation(fields: [alumno_id], references: [alumno_id], onDelete: Cascade, map: "inscripcion_ibfk_2")
-  turno          turno    @relation(fields: [turno_id], references: [turno_id], onDelete: Cascade, map: "inscripcion_ibfk_3")
+  alumnos        alumnos? @relation(fields: [alumno_id], references: [alumno_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_alumno_id")
+  curso          curso?   @relation(fields: [curso_id], references: [curso_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_curso_id")
+  turno          turno    @relation(fields: [turno_id], references: [turno_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_turno_id")
   pagos          pagos?
 
-  @@index([alumno_id], map: "inscripcion_ibfk_2")
-  @@index([turno_id], map: "turno_id")
-  @@index([curso_id], map: "inscripcion_ibfk_1_idx")
-}
-
-model pagos {
-  pago_id        Int         @id @default(autoincrement())
-  monto          Float?
-  nombre         String?
-  apellido       String?
-  correo         String?
-  ref            String?
-  modalidad      String?
-  estatus        String      @default("pendiente") // Ejemplo de valores: "pendiente", "pagado", "cancelado"
-  fecha_pago     DateTime? // Fecha cuando se realizó el pago, puede ser nulo hasta que se pague
-  inscripcion_id Int         @unique
-  inscripcion    inscripcion @relation(fields: [inscripcion_id], references: [inscripcion_id], onDelete: Cascade)
-
-  @@index([inscripcion_id])
+  @@index([alumno_id], map: "idx_alumno_id")
+  @@index([curso_id], map: "idx_curso_id")
+  @@index([turno_id], map: "idx_turno_id")
 }
 
 model materia {
   materia_id         Int                  @id @default(autoincrement())
   curso_id           Int?
   profesor_id        Int?
-  estatusC           Int                  @default(1)
+  estatus            String?              
   nombre             String?              @db.VarChar(255)
-  curso              curso?               @relation(fields: [curso_id], references: [curso_id], onDelete: Cascade, map: "materia_ibfk_1")
-  profesor           profesor?            @relation(fields: [profesor_id], references: [profesor_id], onDelete: Cascade, map: "materia_ibfk_2")
+  curso              curso?               @relation(fields: [curso_id], references: [curso_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_curso_id_materia")
+  profesor           profesor?            @relation(fields: [profesor_id], references: [profesor_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_profesor_id")
   materia_estudiante materia_estudiante[]
 
-  @@index([curso_id], map: "curso_ibfk_1")
-  @@index([profesor_id], map: "curso_ibfk_2")
+  @@index([curso_id], map: "idx_curso_id_materia")
+  @@index([profesor_id], map: "idx_profesor_id")
 }
 
 model materia_estudiante {
@@ -95,33 +79,45 @@ model materia_estudiante {
   nota           Int?
   alumno_id      Int?
   materia_id     Int?
-  materia        materia? @relation(fields: [materia_id], references: [materia_id], onDelete: Cascade, map: "materia_est_ibfk_1")
-  alumno         alumnos? @relation(fields: [alumno_id], references: [alumno_id], onDelete: Cascade, map: "materia_est_ibfk_2")
+  alumnos        alumnos? @relation(fields: [alumno_id], references: [alumno_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_alumno_id_materia_est")
+  materia        materia? @relation(fields: [materia_id], references: [materia_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_materia_id")
 
-  @@index([materia_id], map: "materia_est_ibfk_1")
-  @@index([alumno_id], map: "materia_est_ibfk_2")
+  @@index([alumno_id], map: "idx_alumno_id_materia_est")
+  @@index([materia_id], map: "idx_materia_id")
+}
+
+model pagos {
+  pago_id        Int          @id @default(autoincrement())
+  monto          Float?
+  nombre         String?      @db.VarChar(255)
+  apellido       String?      @db.VarChar(255)
+  correo         String?      @db.VarChar(255)
+  ref            String?      @db.VarChar(255)
+  modalidad      String?      @db.VarChar(255)
+  estatus        String?      @default("pendiente") @db.VarChar(45)
+  fecha_pago     DateTime?    @db.Date
+  inscripcion_id Int?         @unique
+  inscripcion    inscripcion? @relation(fields: [inscripcion_id], references: [inscripcion_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_inscripcion_id")
 }
 
 model profesor {
   profesor_id Int       @id @default(autoincrement())
-  nombre      String?   @db.Text
-  apellido    String?   @db.Text
+  nombre      String?
+  apellido    String?
   direccion   String?   @db.VarChar(255)
   cedula      String?   @db.VarChar(20)
   telefono    String?   @db.VarChar(255)
   correo      String?   @db.VarChar(255)
-  nivel_est   String?   @db.Text
-  estatus     Int       @default(1)
+  nivel_est   String?
+  estatus     String?   
   user_id     Int?
   materia     materia[]
-  usuarios    usuarios? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "profesor_ibfk_1")
-
-  @@index([user_id], map: "profesor_ibfk_1_idx")
+  usuarios    usuarios? @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id_profesor")
 }
 
 model rol {
   rol_id                     Int        @id @default(autoincrement())
-  nombre_rol                 String?    @db.Text
+  nombre_rol                 String?
   usuarios_usuarios_rolTorol usuarios[] @relation("usuarios_rolTorol")
 }
 
@@ -133,14 +129,14 @@ model turno {
 
 model usuarios {
   user_id               Int        @id @default(autoincrement())
-  nombre                String?    @db.Text
+  nombre                String?
   usuario               String?    @db.VarChar(255)
   password              String?    @db.VarChar(255)
   rol                   Int?
-  estatus               Int        @default(1)
+  estatus               String?    
   alumnos               alumnos?
   profesor              profesor[]
-  rol_usuarios_rolTorol rol?       @relation("usuarios_rolTorol", fields: [rol], references: [rol_id], onDelete: NoAction, onUpdate: NoAction, map: "usuarios_ibfk_1")
+  rol_usuarios_rolTorol rol?       @relation("usuarios_rolTorol", fields: [rol], references: [rol_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rol")
 
-  @@index([rol], map: "rol")
+  @@index([rol], map: "idx_rol")
 }
